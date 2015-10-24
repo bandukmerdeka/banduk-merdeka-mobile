@@ -1,0 +1,30 @@
+<md-toolbar>
+	<div class="md-toolbar-tools">
+		<h2 class="md-flex">Banduk Merdeka</h2>
+	</div>
+</md-toolbar>
+<div layout="column" layout-align="center center" style="">
+	<div>Bantuan</div>
+	<div>untuk</div>
+	<div>Penduduk</div>
+</div>
+<div layout="row" layout-align="end end" style="position: fixed; right: 0; bottom: 0;">
+	<md-fab-speed-dial md-direction="up" class="md-fling">
+		<md-fab-trigger>
+			<md-button aria-label="menu" class="md-fab">
+				<md-icon md-font-set="material-icons">menu</md-icon>
+			</md-button>
+		</md-fab-trigger>
+		<md-fab-actions>
+			<md-button aria-label="Lapor" class="md-fab md-raised md-mini" ng-click="front.click('/lapor')">
+				<md-icon md-svg-src="img/icons/ic_create_black_24px.svg" aria-label="Lapor"></md-icon>
+			</md-button>
+			<md-button aria-label="Facebook" class="md-fab md-raised md-mini">
+				<md-icon md-svg-src="img/icons/ic_create_black_24px.svg"></md-icon>
+			</md-button>
+			<md-button aria-label="Google Hangout" class="md-fab md-raised md-mini">
+				<md-icon md-svg-src="img/icons/ic_create_black_24px.svg"></md-icon>
+			</md-button>
+		</md-fab-actions>
+	</md-fab-speed-dial>
+</div>

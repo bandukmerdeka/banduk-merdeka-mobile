@@ -48,23 +48,78 @@ var app = {
     },
     // Update DOM on a Received Event
     receivedEvent: function (id) {
-        /*var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');*/
-
-        console.log('Received Event: ' + id);
+        //console.log('Received Event: ' + id);
     },
     bootstrapAngular: function () {
 
-        angular.module('banduk', ['ngMaterial'])
-            .controller('NavController', ['$mdSidenav', NavController]);
+        angular.module('banduk', ['ngMaterial', 'ngResource', 'ngRoute'])
+            .config(config)
+            .factory('provinceService', ['$resource', provinceService])
+            .controller('FrontController', ['$location', FrontController])
+            .controller('CreateReportController', ['provinceService', CreateReportController])
+            .controller('NavController', ['$mdSidenav', NavController])
+            .controller('FormPersonRegistrationController', ['provinceService', FormPersonRegistrationController]);
 
         angular.element(document).ready(function () {
             angular.bootstrap(document, ['banduk']);
         });
+
+        function config($routeProvider) {
+            $routeProvider
+                .when('/', {
+                    templateUrl: 'frontpage.html',
+                    controller: 'FrontController',
+                    controllerAs: 'front'
+                })
+                .when('/lapor', {
+                    templateUrl: 'reportForm.html',
+                    controller: 'CreateReportController',
+                    controllerAs: 'createReport'
+                });
+        }
+
+        function provinceService($resource) {
+            return $resource('http://bandukrelawanapi-gpratiknya.rhcloud.com/api/provinsi', null, {})
+        }
+
+        function FrontController($location) {
+            console.log('FrontController');
+            var vm = this;
+            vm.click = function (path) {
+                console.log('click');
+                $location.path(path);
+            };
+        }
+
+        function CreateReportController(provinceService) {
+            console.log('CreateReportController');
+            var vm = this;
+            vm.provinces = [];
+            var result = provinceService.get(
+                {},
+                function () {
+                    vm.provinces = result.data;
+                });
+            console.log(result);
+            vm.lapor = function () {
+                console.log('lapor');
+            };
+        }
+
+
+        function FormPersonRegistrationController(provinceService) {
+            var vm = this;
+            vm.provinces = [];
+            var result = provinceService.get(
+                {},
+                function () {
+                    vm.provinces = result.data;
+                });
+            vm.action = function () {
+                console.log('action');
+
+            };
+        }
 
         function NavController($mdSidenav) {
             var vm = this;
@@ -77,31 +132,12 @@ var app = {
                     });
             };
             vm.getMyPosition = function () {
-                console.log('getCurrentPosition');
-                
-                $mdSidenav('left').close().then(function() {
+                $mdSidenav('left').close().then(function () {
                     map.setClickable(true);
                 });
-                
+
                 var onSuccess = function (position) {
-                    console.log('onSuccess');
-                    var myPosition = new plugin.google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-                    map.addMarker({
-                        'position': myPosition,
-                        'title': "Anda di sini"
-                    }, function (marker) {
-                        marker.showInfoWindow();
-                        map.setCenter(myPosition);
-                    });
-                    /*alert(
-                        'Latitude: ' + position.coords.latitude + '\n' +
-                        'Longitude: ' + position.coords.longitude + '\n' +
-                        'Altitude: ' + position.coords.altitude + '\n' +
-                        'Accuracy: ' + position.coords.accuracy + '\n' +
-                        'Altitude Accuracy: ' + position.coords.altitudeAccuracy + '\n' +
-                        'Heading: ' + position.coords.heading + '\n' +
-                        'Speed: ' + position.coords.speed + '\n' +
-                        'Timestamp: ' + position.timestamp + '\n');*/
+                    mapGotoCurrentPosition(position, false);
                 };
                 function onError(error) {
                     console.log('onError');
@@ -109,6 +145,30 @@ var app = {
                 };
                 navigator.geolocation.getCurrentPosition(onSuccess, onError);
             };
+            vm.setMarking = function () {
+                $mdSidenav('left').close().then(function () {
+                    map.setClickable(true);
+                });
+
+                var onSuccess = function (position) {
+                    mapGotoCurrentPosition(position, true);
+                };
+                function onError(error) {
+                    console.log('onError');
+                    alert('code: ' + error.code + '\n' + 'message: ' + error.message + '\n')
+                };
+                navigator.geolocation.getCurrentPosition(onSuccess, onError);
+            };
+        }
+
+        function mapGotoCurrentPosition(position, isDraggable) {
+            var myPosition = new plugin.google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            map.addMarker({
+                'position': myPosition,
+                'draggable': isDraggable
+            }, function (marker) {
+                map.setCenter(myPosition);
+            });
         }
     },
     drawMap: function () {

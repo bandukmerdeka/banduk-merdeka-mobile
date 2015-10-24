@@ -1,0 +1,66 @@
+<md-toolbar>
+	<div class="md-toolbar-tools">
+		<h2><span>Lapor</span></h2>
+		<span flex></span>
+		<md-button class="md-icon-button" aria-label="Kirim" ng-click="createReport.send()">
+			<md-icon md-font-set="material-icons">send</md-icon>
+		</md-button>
+	</div>
+
+</md-toolbar>
+<md-content layout-padding>
+	<form name="createReportForm">
+		<md-input-container flex>
+			<label>Provinsi</label>
+			<md-select ng-model="createReport.province">
+				<md-option ng-repeat="province in createReport.provinces" value="{{province.id}}">
+					{{province.name}}
+				</md-option>
+			</md-select>
+		</md-input-container>
+		<md-input-container flex>
+			<label>Kota</label>
+			<input ng-model="createReport.city">
+		</md-input-container>
+		<md-input-container flex>
+			<label>Kecamatan</label>
+			<input ng-model="createReport.kecamatan">
+		</md-input-container>
+		<md-input-container flex>
+			<label>Kelurahan</label>
+			<input ng-model="createReport.kelurahan">
+		</md-input-container>
+		<md-input-container flex>
+			<label>Nama</label>
+			<input ng-model="createReport.name">
+		</md-input-container>
+		<md-input-container flex>
+			<label>Alamat</label>
+			<input ng-model="createReport.address">
+		</md-input-container>
+		<md-input-container flex>
+			<label>Uraian</label>
+			<textarea ng-model="createReport.description" columns="1" md-maxlength="250"></textarea>
+		</md-input-container>
+	</form>
+</md-content>
+<div layout="row" layout-align="end end" style="position: fixed; right: 0; bottom: 0;">
+	<md-fab-speed-dial md-direction="up" class="md-fling">
+		<md-fab-trigger>
+			<md-button aria-label="menu" class="md-fab">
+				<md-icon md-font-set="material-icons">menu</md-icon>
+			</md-button>
+		</md-fab-trigger>
+		<md-fab-actions>
+			<md-button aria-label="Lapor" class="md-fab md-raised md-mini" ng-click="front.click('/lapor')">
+				<md-icon md-svg-src="img/icons/ic_create_black_24px.svg" aria-label="Lapor"></md-icon>
+			</md-button>
+			<md-button aria-label="Facebook" class="md-fab md-raised md-mini">
+				<md-icon md-svg-src="img/icons/ic_create_black_24px.svg"></md-icon>
+			</md-button>
+			<md-button aria-label="Google Hangout" class="md-fab md-raised md-mini">
+				<md-icon md-svg-src="img/icons/ic_create_black_24px.svg"></md-icon>
+			</md-button>
+		</md-fab-actions>
+	</md-fab-speed-dial>
+</div>

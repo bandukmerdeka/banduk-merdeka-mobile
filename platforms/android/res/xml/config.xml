@@ -19,11 +19,11 @@
         <param name="android-package" value="plugin.google.maps.MyGeocoder" />
     </feature>
     <allow-intent href="market:*" />
-    <name>Banduk Merdeka</name>
+    <name>Banduk Relawan</name>
     <description>
         Applikasi Bantuan Penduduk
     </description>
-    <author email="" href="https://github.com/bandukmerdeka/banduk-merdeka-mobile">
+    <author email="" href="https://github.com/bandukmerdeka/banduk-relawan-mobile">
         Agus Muhammad Ramdan &amp; Giansar Pratiknya
     </author>
     <content src="index.html" />

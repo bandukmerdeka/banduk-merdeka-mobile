@@ -1,0 +1,24 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {}
+    },
+    "installed_plugins": {
+        "cordova-plugin-geolocation": {
+            "PACKAGE_NAME": "org.banduk.mobile"
+        },
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "org.banduk.mobile"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "org.banduk.mobile"
+        },
+        "plugin.google.maps": {
+            "PACKAGE_NAME": "org.banduk.mobile"
+        }
+    },
+    "dependent_plugins": {}
+}
