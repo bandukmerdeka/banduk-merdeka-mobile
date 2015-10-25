@@ -55,10 +55,13 @@ var app = {
         angular.module('banduk', ['ngMaterial', 'ngResource', 'ngRoute'])
             .config(config)
             .factory('provinceService', ['$resource', provinceService])
+            .factory('categoryService', ['$resource', categoryService])
             .factory('submittedReportService', ['$resource', submittedReportService])
             .controller('FrontController', ['$location', FrontController])
-            .controller('CreateReportController', ['provinceService', 'submittedReportService', CreateReportController])
+            .controller('CreateReportController', ['provinceService', 'categoryService', 'submittedReportService', '$location', CreateReportController])
+            .controller('MapController', ['$location', MapController])
             .controller('NavController', ['$mdSidenav', NavController])
+            .controller('ReportListController', ['submittedReportService', '$location', ReportListController])
             .controller('FormPersonRegistrationController', ['provinceService', FormPersonRegistrationController]);
 
         angular.element(document).ready(function () {
@@ -76,39 +79,82 @@ var app = {
                     templateUrl: 'reportForm.html',
                     controller: 'CreateReportController',
                     controllerAs: 'createReport'
+                })
+                .when('/list', {
+                    templateUrl: 'reportList.html',
+                    controller: 'ReportListController',
+                    controllerAs: 'reportList'
+                })
+                .when('/peta', {
+                    templateUrl: 'map.html',
+                    controller: 'MapController',
+                    controllerAs: 'map'
                 });
         }
 
         function provinceService($resource) {
-            return $resource('http://bandukrelawanapi-gpratiknya.rhcloud.com/api/provinsi', null, {})
+            return $resource('http://bandukrelawanapi-gpratiknya.rhcloud.com/api/province', null, {})
+        }
+
+        function categoryService($resource) {
+            return $resource('http://bandukrelawanapi-gpratiknya.rhcloud.com/api/category', null, {})
+            //return $resource('http://localhost:3000/api/category', null, {})
         }
 
         function submittedReportService($resource) {
-            //return $resource('http://bandukrelawanapi-gpratiknya.rhcloud.com/api/submittedReport', null, {})
-            return $resource('http://locahost:3000/api/submittedReport', null, {})
+            return $resource('http://bandukrelawanapi-gpratiknya.rhcloud.com/api/submittedReport', null, {})
+            //return $resource('http://localhost:3000/api/submittedReport', null, {})
         }
 
         function FrontController($location) {
             console.log('FrontController');
             var vm = this;
             vm.click = function (path) {
-                console.log('click');
                 $location.path(path);
             };
         }
 
-        function CreateReportController(provinceService, submittedReportService) {
-            console.log('CreateReportController');
+        function ReportListController(submittedReportService, $location) {
+            console.log('ReportListController');
             var vm = this;
-            vm.provinces = [];
-            var result = provinceService.get(
+            vm.submittedReports = [];
+            var result = submittedReportService.get(
                 {},
                 function () {
-                    vm.provinces = result.data;
+                    vm.submittedReports = result.data;
                 });
-            console.log(result);
+            console.log(vm.submittedReports);
+            vm.gotoPage = function (path) {
+                $location.path(path);
+            };
+        }
+
+        function CreateReportController(provinceService, categoryService, submittedReportService, $location) {
+            console.log('CreateReportController');
+            var vm = this;
+
+            vm.showButtonMap = true;
+            vm.provinces = [];
+            vm.categories = [];
+
+            vm.getProvinces = function () {
+                console.log('getProvinces');
+                var result = provinceService.get(
+                    {},
+                    function () {
+                        vm.provinces = result.data;
+                    });
+            };
+
+            var result = categoryService.get(
+                {},
+                function () {
+                    vm.categories = result.data;
+                });
+
             vm.send = function () {
                 console.log('send');
+                console.log(angular.toJson(vm));
                 submittedReportService.save(
                     {},
                     angular.toJson(vm),
@@ -119,8 +165,62 @@ var app = {
                         console.log('error');
                     })
             };
+
+            vm.openMap = function () {
+                var div = document.getElementById("map_canvasi");
+                var BANDUNG = new plugin.google.maps.LatLng(-6.9110363, 107.6057592);
+                map = plugin.google.maps.Map.getMap(div, {
+                    'camera': {
+                        'latLng': BANDUNG,
+                        'zoom': 12
+                    }
+                });
+                getCurrentPosition();
+                vm.showButtonMap = false;
+            };
+
+            function getCurrentPosition() {
+                var onSuccess = function (position) {
+                    mapGotoCurrentPosition(position, true);
+                };
+                function onError(error) {
+                    console.log('onError');
+                    alert('code: ' + error.code + '\n' + 'message: ' + error.message + '\n')
+                };
+                navigator.geolocation.getCurrentPosition(onSuccess, onError);
+            }
+
+            function mapGotoCurrentPosition(position, isDraggable) {
+                vm.latitude = position.coords.latitude;
+                vm.longitude = position.coords.longitude;
+                var myPosition = new plugin.google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                map.addMarker({
+                    'position': myPosition,
+                    'draggable': isDraggable
+                }, function (marker) {
+                    map.setCenter(myPosition);
+                    marker.addEventListener(plugin.google.maps.event.MARKER_DRAG_END, function (marker) {
+                        marker.getPosition(function (latLng) {
+                            marker.setTitle(latLng.toUrlValue());
+                            marker.showInfoWindow();
+                            vm.latitude = latLng.lat;
+                            vm.longitude = latLng.lng;
+                        });
+                    });
+                });
+            }
+
+            vm.gotoPage = function (path) {
+                $location.path(path);
+            };
         }
 
+        function MapController($location) {
+            var vm = this;
+            vm.back = function (path) {
+                $location.path(path);
+            };
+        }
 
         function FormPersonRegistrationController(provinceService) {
             var vm = this;
@@ -176,26 +276,19 @@ var app = {
             };
         }
 
-        function mapGotoCurrentPosition(position, isDraggable) {
-            var myPosition = new plugin.google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-            map.addMarker({
-                'position': myPosition,
-                'draggable': isDraggable
-            }, function (marker) {
-                map.setCenter(myPosition);
-            });
-        }
+
+
+
     },
     drawMap: function () {
-
-        const BANDUNG = new plugin.google.maps.LatLng(-6.9110363, 107.6057592);
+        /*const BANDUNG = new plugin.google.maps.LatLng(-6.9110363, 107.6057592);
         var div = document.getElementById("map_canvas");
         map = plugin.google.maps.Map.getMap(div, {
             'camera': {
                 'latLng': BANDUNG,
                 'zoom': 12
             }
-        });
+        });*/
     }
 };
 

@@ -4,9 +4,9 @@
 	</div>
 </md-toolbar>
 <div layout="column" layout-align="center center" style="">
-	<div>Bantuan</div>
-	<div>untuk</div>
-	<div>Penduduk</div>
+	<div class="md-display-3">Bantuan</div>
+	<div  class="md-display-2">untuk</div>
+	<div  class="md-display-1">Penduduk</div>
 </div>
 <div layout="row" layout-align="end end" style="position: fixed; right: 0; bottom: 0;">
 	<md-fab-speed-dial md-direction="up" class="md-fling">
@@ -19,11 +19,11 @@
 			<md-button aria-label="Lapor" class="md-fab md-raised md-mini" ng-click="front.click('/lapor')">
 				<md-icon md-svg-src="img/icons/ic_create_black_24px.svg" aria-label="Lapor"></md-icon>
 			</md-button>
-			<md-button aria-label="Facebook" class="md-fab md-raised md-mini">
-				<md-icon md-svg-src="img/icons/ic_create_black_24px.svg"></md-icon>
+			<md-button aria-label="Facebook" class="md-fab md-raised md-mini" ng-click="front.click('/list')">
+				<md-icon md-svg-src="img/icons/ic_place_black_24px.svg"></md-icon>
 			</md-button>
-			<md-button aria-label="Google Hangout" class="md-fab md-raised md-mini">
-				<md-icon md-svg-src="img/icons/ic_create_black_24px.svg"></md-icon>
+			<md-button aria-label="Google Hangout" class="md-fab md-raised md-mini" ng-click="front.click('/lapor')">
+				<md-icon md-svg-src="img/icons/ic_build_black_24px.svg"></md-icon>
 			</md-button>
 		</md-fab-actions>
 	</md-fab-speed-dial>
